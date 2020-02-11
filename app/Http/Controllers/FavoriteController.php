@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Brian2694\Toastr\Facades\Toastr;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class FavoriteController extends Controller
+{
+    public function add($post)
+    {
+        // return $post;
+        $user = Auth::user();
+        $isFavorite = $user->favorite_posts()->where('post_id', $post)->count();
+
+        if ($isFavorite == 0) {
+            $user->favorite_posts()->attach($post);
+            Toastr::success('Post Successfully added to your favorite list.', 'Success');
+            return redirect()->back();
+        } else {
+            $user->favorite_posts()->detach($post);
+            Toastr::success('Post successfully removed from your favorite list.', 'Success');
+            return redirect()->back();
+        }
+    }
+}
